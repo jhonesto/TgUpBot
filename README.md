@@ -1,4 +1,4 @@
-# Telegram Up Bot
+# TgUpBot - Telegram Up Bot
 
 This project, written in Perl, enables the extraction of image and description metadata from PDF ebooks to back up your e-books in your Telegram public/private group/channel.
 
@@ -21,6 +21,6 @@ git clone git@github.com:jhonesto/TgUpBot.git
 To use this project just run the command as follow:
 
 ```
-perl TelegramUpBot -t|--token "TOKEN" -f|--folder "FOLDER" -c|--chat-id "CHAT-ID"
+perl TgUpBot -t|--token "TOKEN" -f|--folder "FOLDER" -c|--chat-id "CHAT-ID"
 ``` 
 
