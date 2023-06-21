@@ -14,7 +14,7 @@ This project, written in Perl, enables the extraction of image and description m
 To install this project following this steps:
 
 ``` 
-git clone
+git clone git@github.com:jhonesto/TgUpBot.git
 ```
 
 ## Using
