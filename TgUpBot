@@ -1,0 +1,79 @@
+#!/usr/bin/perl
+
+use 5.18.00;
+use warnings;
+use Getopt::Long;
+
+use lib "./My";
+use figlet qw( show_figlet );
+use check_list qw( check_command check_files check_directory );
+use files qw( get_file_list move_files create_dir );
+use metadata qw( remove_metadata extract_metadata );
+use markdown qw( create_markdown );
+use upload qw ( send_telegram );
+use subs qw ( usage );
+
+show_figlet;
+
+my $ext = "pdf";
+my $inputdir;
+my $chat_id;
+my $token;
+my $ipv4;
+my $socks5;
+
+GetOptions(
+  'c|chat-id=s' => \$chat_id,
+  'f|folder=s' => \$inputdir,
+  't|token=s' => \$token,
+  'e|extension=s' => \$ext,
+  '4|ipv4' => \$ipv4, 
+  's|socks5=s' => \$socks5
+);
+
+if(!defined($chat_id) || !defined($inputdir) || !defined($token)) {
+  my $msg = "You need to provide -c --chat-id, -f --folder and -t --token!.\n\n";
+  print STDERR $msg ;
+  &usage;
+  exit;
+}
+
+# check programs 
+check_command 'fetch-ebook-metadata' or die "$0 requires fetch-ebook-metadata";
+check_command 'exiftool' or die "$0 requires exiftool";
+
+#check input directory
+check_directory $inputdir or die "$0 directory $inputdir not found!";
+
+# check pdf files
+check_files( $inputdir, $ext ) or die "$0 $ext files not found in $inputdir";
+
+#obtain list of files
+
+my @files = get_file_list( $inputdir, $ext);
+
+foreach my $file (@files){
+  print "\nProcessing file $file\n";
+  extract_metadata $file;
+  remove_metadata $file;
+  create_markdown $file;
+  send_telegram($file, $chat_id, $token, $ipv4, $socks5 );
+  create_dir $file;
+  move_files $file;
+}
+
+
+######################### subs #########################
+
+# Usage function
+sub usage{
+    print "Usage: $0 [OPTIONS]\n
+    Options:\n
+    -c, --chat-id\t[required] Telegram Chat ID.
+    -f, --folder \t[required] Folder to be scanned.
+    -t, --token  \t[required] Token from Telegram Botfather.
+    -e, --extension\t[optional] File extension, default pdf.
+    -4, --ipv4   \t[optional] For use with ipv4 only.
+    -s, --socks5 \t[optional] To use with socks5.
+    \n";
+}
