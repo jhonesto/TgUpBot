@@ -90,7 +90,7 @@ sub send_file {
     	$socks5="";
     }
     
-	my $check = `sh -c 'curl --ipv4 --socks5 http://localhost:3128 -F "document=\@$document" -F "chat_id=-100$chat_id" --url https://api.telegram.org/bot$token/sendDocument'`;
+	my $check = `sh -c 'curl $ipv4 $socks5 -F "document=\@$document" -F "chat_id=-100$chat_id" --url https://api.telegram.org/bot$token/sendDocument'`;
 	return $check;
 }
 
